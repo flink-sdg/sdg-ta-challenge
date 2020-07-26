@@ -29,6 +29,9 @@ PGHOST=<postgres host>
 PGPASSWORD=<postgres password>
 PGDATABASE=<postgres database>
 PGPORT=<postgres port>
+SENDGRIDAPIKEY=<sendgrid api key>
+SENDGRIDEMAIL=<sendgrid from and reply to email>
+SENDGRIDNAME=<sendgrid from and reply to name>
 LOGREQUESTS=false
 LOGLEVEL=debug
 ```
