@@ -21,7 +21,7 @@ END;
 $BODY$;
 
 ALTER FUNCTION public.dates_on_insert()
-    OWNER TO postgres;
+    OWNER TO ${process.env.PGUSER};
 
 -- FUNCTION: public.dates_on_update()
 
@@ -39,7 +39,7 @@ END;
 $BODY$;
 
 ALTER FUNCTION public.dates_on_update()
-    OWNER TO postgres;
+    OWNER TO ${process.env.PGUSER};
 
 -- Table: public.redditors
 
@@ -62,7 +62,7 @@ CREATE TABLE public.redditors
 TABLESPACE pg_default;
 
 ALTER TABLE public.redditors
-    OWNER to postgres;
+    OWNER TO ${process.env.PGUSER};
 
 -- Trigger: dates_on_insert
 
@@ -110,7 +110,7 @@ CREATE TABLE public.subreddits
 TABLESPACE pg_default;
 
 ALTER TABLE public.subreddits
-    OWNER to postgres;
+    OWNER TO ${process.env.PGUSER};
 
 -- Trigger: dates_on_insert
 
