@@ -21,7 +21,7 @@ Install
 $ yarn install
 ```
 Edit .env file
-- The file at sdg-ta-challenge > .env.sample should be edited as desired
+- Create a new file sdg-ta-challenge > .env   . The contents file at sdg-ta-challenge > .env.sample should be copied into sdg-ta-challenge > .env and edited as desired
 ```sh
 PORT=8000
 PGUSER=postgres
@@ -45,6 +45,8 @@ Start your server
 $ yarn dev
 ```
 #### To manually create your database if uncomfortable with databaseInit
+>Below was exported having been owned by a root user.  The databaseInit script will set the owner of what's created based on the .env configuration.
+If you choose to use this, mind the owner that's set; it may need updating.
 ```
 CREATE FUNCTION public.dates_on_insert()
     RETURNS trigger
