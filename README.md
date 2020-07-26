@@ -24,7 +24,7 @@ Edit .env file
 - Create a new file sdg-ta-challenge > .env   . The contents file at sdg-ta-challenge > .env.sample should be copied into sdg-ta-challenge > .env and edited as desired
 ```sh
 PORT=8000
-PGUSER=postgres
+PGUSER=<postgres user>
 PGHOST=<postgres host>
 PGPASSWORD=<postgres password>
 PGDATABASE=<postgres database>
