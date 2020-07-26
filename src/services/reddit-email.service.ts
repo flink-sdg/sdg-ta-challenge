@@ -58,6 +58,9 @@ export class RedditEmailService
         };
         
         updatedRedditors();
+        
+        //TODO: This is a high risk proposition.  As async event loop doesn't always execute exactly, there's a small chance an email will not get sent.  The risk can be prevented with another design... but ... time ...
+        
         setInterval(updatedRedditors, 60000);
     }
     

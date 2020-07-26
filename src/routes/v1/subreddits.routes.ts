@@ -1,9 +1,9 @@
 import {Request, Response} from 'express';
 import {QueryBuilder} from '../../builders/query.builder';
-import {ISubreddit, SubredditBase} from '../../models';
+import {SubredditBase} from '../../models';
 
-import {DataAccessService} from '../../services/data-access.service';
-import {EEntities, ESqlCommand, IQuery} from '../../types';
+import {DataAccessService} from '../../services';
+import {EEntities, ESqlCommand} from '../../types';
 
 /**
  * @swagger

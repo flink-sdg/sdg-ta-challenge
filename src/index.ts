@@ -6,9 +6,8 @@ import swaggerUi from 'swagger-ui-express';
 import expressWinston from 'express-winston';
 import winston from 'winston';
 
-import {QueryBuilder} from './builders/query.builder';
-import {DataAccessService} from './services/data-access.service';
-import {RedditEmailService} from './services/reddit-email.service';
+import {QueryBuilder} from './builders';
+import {DataAccessService, RedditEmailService} from './services';
 import {swaggerDefinition} from './types';
 
 import {
@@ -69,6 +68,9 @@ RedditEmailService.setupEmails(
     RedditEmailService.emailSubreddits
 );
 
+// Could have put these elsewhere, but I think it's valuable to get a high level understanding of the application at the entry point instead of needing to jump into a bunch of files.
+// There are many times decisions are made for good reasons, would love to discuss!
+
 router.get('/redditors', getRedditors(dataAccessService, new QueryBuilder()));
 router.get('/redditors/:redditor_id', getRedditorsRedditor(dataAccessService, new QueryBuilder()));
 router.post('/redditors', postRedditors(dataAccessService, new QueryBuilder()));
@@ -92,4 +94,9 @@ app.use('/v1', router);
 app.listen(port, () =>
 {
     console.log(`server started at http://localhost:${port}`);
+    
+    if(process.env.NODE_ENV === 'development')
+    {
+        console.log(`swagger at http://localhost:${port}/api-docs`);
+    }
 });

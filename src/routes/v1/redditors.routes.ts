@@ -1,10 +1,8 @@
-import {Express, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {QueryBuilder} from '../../builders/query.builder';
 import {SubredditBase, RedditorBase} from '../../models';
-import {RedditEmailService} from '../../services/reddit-email.service';
-import {EEntities, ESqlCommand, IQuery} from '../../types';
-
-import {DataAccessService} from '../../services/data-access.service';
+import {DataAccessService, RedditEmailService} from '../../services';
+import {EEntities, ESqlCommand} from '../../types';
 
 /**
  * @swagger

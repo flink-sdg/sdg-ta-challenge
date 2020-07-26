@@ -1,60 +1,22 @@
-# sdg-ta code challenge
-> To get this project up and running according to these instructions, make sure you have:
-- node / npm
-- yarn
-- postgres
-- sendgrid api key
-> Tweak as needed
-> Access api docs at: ::fq-host/api-docs
-> TimeZones can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones -- use TZ database name
-#### -- Quick Start
-Get code
-```sh
-$ git clone https://github.com/flink-sdg/sdg-ta-challenge.git
-```
-Navigate into the directory
-```sh
-$ cd sdg-ta-challenge
-```
-Install
-```sh
-$ yarn install
-```
-Edit .env file
-- The file at sdg-ta-challenge > .env.sample should be edited as desired
-```sh
-PORT=8000
-PGUSER=postgres
-PGHOST=<postgres host>
-PGPASSWORD=<postgres password>
-PGDATABASE=<postgres database>
-PGPORT=<postgres port>
-LOGREQUESTS=false
-LOGLEVEL=debug
-```
-Setup database
-```sh
-$ yarn databaseInit
-```
-Run your tests
-```sh
-$ yarn test
-```
-Start your server
-```sh
-$ yarn dev
-```
-#### To manually create your database if uncomfortable with databaseInit
-```
+import dotenv from 'dotenv';
+import {DataAccessService} from '../services/data-access.service';
+
+dotenv.config();
+
+const dataAccessService: DataAccessService = DataAccessService.instance();
+
+(async() => {
+    try {
+        const data: any = await dataAccessService.query(`
 CREATE FUNCTION public.dates_on_insert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
 AS $BODY$BEGIN
-	NEW.create_date := EXTRACT(epoch from now());
-	NEW.update_date := EXTRACT(epoch from now());
-	RETURN NEW;
+\tNEW.create_date := EXTRACT(epoch from now());
+\tNEW.update_date := EXTRACT(epoch from now());
+\tRETURN NEW;
 END;
 $BODY$;
 
@@ -71,8 +33,8 @@ CREATE FUNCTION public.dates_on_update()
     COST 100
     VOLATILE NOT LEAKPROOF
 AS $BODY$BEGIN
-	NEW.update_date := EXTRACT(epoch from now());
-	RETURN NEW;
+\tNEW.update_date := EXTRACT(epoch from now());
+\tRETURN NEW;
 END;
 $BODY$;
 
@@ -117,7 +79,7 @@ CREATE TRIGGER dates_on_insert
 -- DROP TRIGGER dates_on_update ON public.redditors;
 
 CREATE TRIGGER dates_on_update
-    BEFORE UPDATE 
+    BEFORE UPDATE
     ON public.redditors
     FOR EACH ROW
     EXECUTE PROCEDURE public.dates_on_update();
@@ -165,8 +127,17 @@ CREATE TRIGGER dates_on_insert
 -- DROP TRIGGER dates_on_update ON public.subreddits;
 
 CREATE TRIGGER dates_on_update
-    BEFORE UPDATE 
+    BEFORE UPDATE
     ON public.subreddits
     FOR EACH ROW
     EXECUTE PROCEDURE public.dates_on_update();
-```
+`);
+        console.log(`Done initializing database.`);
+        dataAccessService.end();
+    }
+    catch(error)
+    {
+        console.log(`Done initializing database.`);
+        dataAccessService.end();
+    }
+})();

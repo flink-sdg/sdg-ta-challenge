@@ -113,6 +113,8 @@ export class QueryBuilder
                 return null;
             }
             
+            //TODO: Would love to get some robust querying capabilities and move this where clause generation into another method
+            
             if(this._command !== ESqlCommand.INSERT && ((this._where && Object.keys(this.getBaseObjectFromEntity(this._entity))
                 .includes(this._where.column)) || (!this._deleted || this._deleted !== 'true')))
             {
@@ -170,7 +172,7 @@ export class QueryBuilder
         return null;
     }
     
-    public raze()
+    public raze(): QueryBuilder
     {
         this._baseObject = undefined;
         this._columns = undefined;
@@ -179,6 +181,8 @@ export class QueryBuilder
         this._entity = undefined;
         this._valueObject = undefined;
         this._where = undefined;
+        
+        return this;
     }
     
     private generateValueText(baseObject: any, valueObject: any, sqlCommand: ESqlCommand): IQuery
