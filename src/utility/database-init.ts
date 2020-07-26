@@ -1,70 +1,27 @@
-# sdg-ta code challenge
-> To get this project up and running according to these instructions, make sure you have:
-- node / npm
-- yarn
-- postgres
-- sendgrid api key
-> Tweak as needed
-> Access api docs at: ::fq-host/api-docs
-> TimeZones can be found here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones -- use TZ database name
-#### -- Quick Start
-Get code
-```sh
-$ git clone https://github.com/flink-sdg/sdg-ta-challenge.git
-```
-Navigate into the directory
-```sh
-$ cd sdg-ta-challenge
-```
-Install
-```sh
-$ yarn install
-```
-Edit .env file
-- Create a new file sdg-ta-challenge > .env   . The contents file at sdg-ta-challenge > .env.sample should be copied into sdg-ta-challenge > .env and edited as desired
-```sh
-PORT=8000
-PGUSER=<postgres user>
-PGHOST=<postgres host>
-PGPASSWORD=<postgres password>
-PGDATABASE=<postgres database>
-PGPORT=<postgres port>
-SENDGRIDAPIKEY=<sendgrid api key>
-SENDGRIDEMAIL=<sendgrid from and reply to email>
-SENDGRIDNAME=<sendgrid from and reply to name>
-LOGREQUESTS=false
-LOGLEVEL=debug
-```
-Setup database
-```sh
-$ yarn databaseInit
-```
-Run your tests
-```sh
-$ yarn test
-```
-Start your server
-```sh
-$ yarn dev
-```
-#### To manually create your database if uncomfortable with databaseInit
->Below was exported having been owned by a root user.  The databaseInit script will set the owner of what's created based on the .env configuration.
-If you choose to use this, mind the owner that's set; it may need updating.
-```
+import dotenv from 'dotenv';
+import {DataAccessService} from '../services/data-access.service';
+
+dotenv.config();
+
+const dataAccessService: DataAccessService = DataAccessService.instance();
+
+(async() => {
+    try {
+        const data: any = await dataAccessService.query(`
 CREATE FUNCTION public.dates_on_insert()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     COST 100
     VOLATILE NOT LEAKPROOF
 AS $BODY$BEGIN
-	NEW.create_date := EXTRACT(epoch from now());
-	NEW.update_date := EXTRACT(epoch from now());
-	RETURN NEW;
+\tNEW.create_date := EXTRACT(epoch from now());
+\tNEW.update_date := EXTRACT(epoch from now());
+\tRETURN NEW;
 END;
 $BODY$;
 
 ALTER FUNCTION public.dates_on_insert()
-    OWNER TO postgres;
+    OWNER TO ${process.env.PGUSER};
 
 -- FUNCTION: public.dates_on_update()
 
@@ -76,13 +33,13 @@ CREATE FUNCTION public.dates_on_update()
     COST 100
     VOLATILE NOT LEAKPROOF
 AS $BODY$BEGIN
-	NEW.update_date := EXTRACT(epoch from now());
-	RETURN NEW;
+\tNEW.update_date := EXTRACT(epoch from now());
+\tRETURN NEW;
 END;
 $BODY$;
 
 ALTER FUNCTION public.dates_on_update()
-    OWNER TO postgres;
+    OWNER TO ${process.env.PGUSER};
 
 -- Table: public.redditors
 
@@ -105,7 +62,7 @@ CREATE TABLE public.redditors
 TABLESPACE pg_default;
 
 ALTER TABLE public.redditors
-    OWNER to postgres;
+    OWNER TO ${process.env.PGUSER};
 
 -- Trigger: dates_on_insert
 
@@ -122,7 +79,7 @@ CREATE TRIGGER dates_on_insert
 -- DROP TRIGGER dates_on_update ON public.redditors;
 
 CREATE TRIGGER dates_on_update
-    BEFORE UPDATE 
+    BEFORE UPDATE
     ON public.redditors
     FOR EACH ROW
     EXECUTE PROCEDURE public.dates_on_update();
@@ -153,7 +110,7 @@ CREATE TABLE public.subreddits
 TABLESPACE pg_default;
 
 ALTER TABLE public.subreddits
-    OWNER to postgres;
+    OWNER TO ${process.env.PGUSER};
 
 -- Trigger: dates_on_insert
 
@@ -170,8 +127,17 @@ CREATE TRIGGER dates_on_insert
 -- DROP TRIGGER dates_on_update ON public.subreddits;
 
 CREATE TRIGGER dates_on_update
-    BEFORE UPDATE 
+    BEFORE UPDATE
     ON public.subreddits
     FOR EACH ROW
     EXECUTE PROCEDURE public.dates_on_update();
-```
+`);
+        console.log(`Done initializing database.`);
+        dataAccessService.end();
+    }
+    catch(error)
+    {
+        console.log(`Done initializing database.`);
+        dataAccessService.end();
+    }
+})();
